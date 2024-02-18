@@ -1,0 +1,50 @@
+.sticker.selected {
+  border: 2px solid #ff0000;
+  box-sizing: border-box;
+}
+
+#canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 2px dashed #ccc;
+  margin-top: 20px;
+}
+
+.sticker {
+  width: 80px;
+  margin: 10px;
+  cursor: grab;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  margin: 0;
+}
+
+#sidePane {
+  background: #f0f0f0;
+  width: 200px;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+#dragHandle {
+  background: #333;
+  width: 5px;
+  cursor: ew-resize;
+  height: 100%;
+}
+
+#canvasContainer {
+  flex-grow: 1;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+#canvas {
+  cursor: none;
+}
