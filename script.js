@@ -23,14 +23,18 @@ document.addEventListener("DOMContentLoaded", () => {
     sizeSlider.disabled = isWildcardMode;
     stickers.forEach((sticker) => (sticker.style.pointerEvents = isWildcardMode ? "none" : "auto"));
 
-    palette.style.display = isWildcardMode ? "none" : "block";
-    slider.style.display = isWildcardMode ? "none" : "block";
+    // palette.style.display = isWildcardMode ? "none" : "block";
+    // slider.style.display = isWildcardMode ? "none" : "block";
+
+    stickers.forEach((sticker) => (sticker.style.opacity = isWildcardMode ? "0.5" : "1"));
+    palette.style.opacity = isWildcardMode ? "0.5" : "1";
+    slider.style.opacity = isWildcardMode ? "0.5" : "1";
 
     if (isWildcardMode) {
       canvas.style.cursor = "crosshair";
       document.querySelectorAll(".sticker").forEach((s) => s.classList.remove("selected"));
     } else {
-      canvas.style.cursor = "default";
+      canvas.style.cursor = "crosshair";
     }
   });
 
