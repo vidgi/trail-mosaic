@@ -1,23 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
   let currentBrushSrc = "";
   let currentStickerSize = 50;
+  let isMouseDown = false;
+  let isWildcardMode = false;
+  let placementTimeout = null;
 
   const sizeSlider = document.getElementById("stickerSize");
+  const wildcardCheckbox = document.getElementById("wildcardMode");
+  const stickers = document.querySelectorAll(".sticker");
+  const palette = document.getElementById("palette");
+  const slider = document.getElementById("slider");
+  const canvas = document.getElementById("canvas");
+  const dragHandle = document.getElementById("dragHandle");
+  const sidePane = document.getElementById("sidePane");
+
   sizeSlider.addEventListener("input", function () {
     currentStickerSize = this.value;
   });
 
-  function createSticker(src) {
-    const stickerImg = document.createElement("img");
-    stickerImg.src = src;
-    stickerImg.style.position = "absolute";
-    stickerImg.style.width = `${currentStickerSize}px`;
-    stickerImg.style.pointerEvents = "none";
-    return stickerImg;
-  }
+  wildcardCheckbox.addEventListener("change", function () {
+    isWildcardMode = this.checked;
+    sizeSlider.disabled = isWildcardMode;
+    stickers.forEach((sticker) => (sticker.style.pointerEvents = isWildcardMode ? "none" : "auto"));
 
-  document.querySelectorAll(".sticker").forEach((sticker) => {
+    palette.style.display = isWildcardMode ? "none" : "block";
+    slider.style.display = isWildcardMode ? "none" : "block";
+
+    if (isWildcardMode) {
+      canvas.style.cursor = "crosshair";
+      document.querySelectorAll(".sticker").forEach((s) => s.classList.remove("selected"));
+    } else {
+      canvas.style.cursor = "default";
+    }
+  });
+
+  stickers.forEach((sticker) => {
     sticker.addEventListener("click", function () {
+      if (isWildcardMode) return; // Ignore clicks if in wildcard mode
       document.querySelectorAll(".sticker").forEach((s) => s.classList.remove("selected"));
       sticker.classList.add("selected");
       currentBrushSrc = sticker.getAttribute("src");
@@ -25,45 +44,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  document.getElementById("canvas").addEventListener("mouseenter", function () {
-    if (currentBrushSrc) {
-      this.style.cursor = `url('${currentBrushSrc}'), auto`;
-    }
-  });
-
-  document.getElementById("canvas").addEventListener("mouseleave", function () {
-    this.style.cursor = "default";
-  });
-
-  document.getElementById("canvas").addEventListener("mousedown", function (e) {
-    if (!currentBrushSrc) return;
+  canvas.addEventListener("mousedown", (e) => {
     isMouseDown = true;
     paintSticker(e.pageX, e.pageY);
   });
 
-  document.getElementById("canvas").addEventListener("mousemove", function (e) {
-    if (isMouseDown && currentBrushSrc) {
+  canvas.addEventListener("mousemove", (e) => {
+    if (isMouseDown) {
       paintSticker(e.pageX, e.pageY);
     }
   });
 
-  document.addEventListener("mouseup", function () {
+  document.addEventListener("mouseup", () => {
     isMouseDown = false;
+    clearTimeout(placementTimeout);
+    placementTimeout = null;
   });
-
-  function paintSticker(pageX, pageY) {
-    const sticker = createSticker(currentBrushSrc);
-    const canvasRect = document.getElementById("canvas").getBoundingClientRect();
-    sticker.style.left = `${pageX - canvasRect.left - currentStickerSize / 2}px`;
-    sticker.style.top = `${pageY - canvasRect.top - currentStickerSize / 2}px`;
-    document.getElementById("canvas").appendChild(sticker);
+  function updateCursorForCanvas(src) {
+    if (!isWildcardMode) {
+      canvas.style.cursor = `url('${src}'), auto`;
+    }
   }
 
-  const dragHandle = document.getElementById("dragHandle");
-  const sidePane = document.getElementById("sidePane");
-  let isResizing = false;
+  function paintSticker(pageX, pageY) {
+    if (isWildcardMode) {
+      const randomStickerIndex = Math.floor(Math.random() * stickers.length);
+      currentBrushSrc = stickers[randomStickerIndex].getAttribute("src");
+      currentStickerSize = Math.floor(Math.random() * (300 - 10)) + 10;
+    }
+    const stickerImg = document.createElement("img");
+    stickerImg.src = currentBrushSrc;
+    stickerImg.style.position = "absolute";
+    stickerImg.style.width = `${currentStickerSize}px`;
+    stickerImg.style.pointerEvents = "none";
+    const canvasRect = canvas.getBoundingClientRect();
+    stickerImg.style.left = `${pageX - canvasRect.left - currentStickerSize / 2}px`;
+    stickerImg.style.top = `${pageY - canvasRect.top - currentStickerSize / 2}px`;
+    canvas.appendChild(stickerImg);
+  }
 
-  dragHandle.addEventListener("mousedown", function (e) {
+  dragHandle.addEventListener("mousedown", (e) => {
     e.preventDefault();
     isResizing = true;
     document.addEventListener("mousemove", handleMouseMove);
@@ -71,9 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function handleMouseMove(e) {
-    if (!isResizing) {
-      return;
-    }
+    if (!isResizing) return;
     let newWidth = e.clientX;
     sidePane.style.width = `${newWidth}px`;
   }

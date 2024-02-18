@@ -11,9 +11,16 @@
 
     <div id="sidePane">
         <div id="toolbar">
-            <label for="stickerSize">Sticker Size:</label>
-            <input type="range" id="stickerSize" min="10" max="300" value="50">
+            <div>
+                <label for="wildcardMode">Wildcard Mode:</label>
+                <input type="checkbox" id="wildcardMode">
+            </div>
+            <div id="slider">
+                <label for="stickerSize">Sticker Size:</label>
+                <input type="range" id="stickerSize" min="10" max="300" value="150">
+            </div>
         </div>
+
         <div id="palette">
             <img src="Subject 1.png" alt="Mushroom" class="sticker">
             <img src="Subject 2.png" alt="Lichen" class="sticker">

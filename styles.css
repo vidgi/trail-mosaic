@@ -17,7 +17,13 @@
   cursor: grab;
 }
 
+p {
+  font-family: "Courier New", Courier, monospace;
+}
+
 body {
+  font-family: "Courier New", Courier, monospace;
+
   display: flex;
   height: 100vh;
   margin: 0;
