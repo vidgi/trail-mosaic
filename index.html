@@ -24,10 +24,16 @@
             </marquee>
         </div>
         <div id="toolbar">
+            <button id="downloadMosaic">download your mosaic!</button>
+            <br />
+            <br />
+
             <div>
                 <label for="wildcardMode">Random Mode:</label>
                 <input type="checkbox" id="wildcardMode">
             </div>
+            <br />
+
             <div id="slider">
                 <label for="stickerSize">Sticker Size:</label>
                 <input type="range" id="stickerSize" min="10" max="300" value="150">
@@ -60,8 +66,9 @@
     <div id="canvasContainer">
         <div id="canvas"></div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
     <script src="script.js"></script>
+
 </body>
 
 </html>

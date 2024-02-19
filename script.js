@@ -14,6 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const dragHandle = document.getElementById("dragHandle");
   const sidePane = document.getElementById("sidePane");
 
+  function downloadMosaic() {
+    html2canvas(document.getElementById("canvas")).then(function (canvas) {
+      const timestamp = new Date().toISOString().replace(/:/g, "-").replace(/\..+/, "");
+      var dataURL = canvas.toDataURL("image/png");
+      var link = document.createElement("a");
+      link.href = dataURL;
+      link.download = `trail-mosaic-${timestamp}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
+
+  document.getElementById("downloadMosaic").addEventListener("click", downloadMosaic);
+
   sizeSlider.addEventListener("input", function () {
     currentStickerSize = this.value;
   });
@@ -40,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   stickers.forEach((sticker) => {
     sticker.addEventListener("click", function () {
-      if (isWildcardMode) return; // Ignore clicks if in wildcard mode
+      if (isWildcardMode) return;
       document.querySelectorAll(".sticker").forEach((s) => s.classList.remove("selected"));
       sticker.classList.add("selected");
       currentBrushSrc = sticker.getAttribute("src");
